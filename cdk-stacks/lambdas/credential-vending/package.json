@@ -1,0 +1,9 @@
+{
+  "name": "credential-vending",
+  "version": "1.0.0",
+  "description": "Lambda that vends temporary AWS credentials for V2V translation",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-sts": "^3.500.0"
+  }
+}

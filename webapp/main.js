@@ -13,7 +13,7 @@ import {
   LOGGER_PREFIX,
   TRANSCRIBE_PARTIAL_RESULTS_STABILITY,
 } from "./constants";
-import { getLoginUrl, getValidTokens, handleRedirect, isAuthenticated, logout, setRedirectURI, startTokenRefreshTimer } from "./utils/authUtility";
+import { logout, startCredentialRefreshTimer } from "./utils/authUtility";
 import { AudioStreamManager } from "./managers/AudioStreamManager";
 import { SessionTrackManager, TrackType } from "./managers/SessionTrackManager";
 import { createMicrophoneStream } from "./utils/transcribeUtils";
@@ -95,34 +95,11 @@ window.addEventListener("load", () => {
 async function initializeApp() {
   try {
     console.info(`${LOGGER_PREFIX} - initializeApp - Initializing app`);
-    setRedirectURI();
-    // Check if we're returning from Cognito login
-    const isRedirect = await handleRedirect();
-    if (isRedirect) {
-      console.info(`${LOGGER_PREFIX} - initializeApp - Redirected from Cognito login`);
-      startTokenRefreshTimer();
-      showApp();
-      return;
-    }
-
-    // Check authentication and token expiration
-    if (!isAuthenticated()) {
-      const tokens = await getValidTokens();
-      if (tokens?.accessToken == null || tokens?.idToken == null || tokens?.refreshToken == null) {
-        // No valid token available, redirect to login
-        console.info(`${LOGGER_PREFIX} - initializeApp - No valid token available, redirecting to login`);
-        window.location.href = getLoginUrl();
-        return;
-      }
-    }
-
-    // Show app with valid token
-    console.info(`${LOGGER_PREFIX} - initializeApp - Valid token available, showing app`);
-    startTokenRefreshTimer();
+    startCredentialRefreshTimer();
+    console.info(`${LOGGER_PREFIX} - initializeApp - Credentials will be fetched on demand, showing app`);
     showApp();
   } catch (error) {
     console.error(`${LOGGER_PREFIX} - initializeApp - Error initializing app:`, error);
-    window.location.href = getLoginUrl();
   }
 }
 

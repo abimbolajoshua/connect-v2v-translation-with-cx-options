@@ -7,7 +7,7 @@ import * as ssm from "aws-cdk-lib/aws-ssm";
 import { loadSSMParams } from "../config/ssm-params-util";
 const configParams = require("../config/config.params.json");
 
-import { CognitoStack } from "./infrastructure/cognito-stack";
+import { CredentialVendingStack } from "./infrastructure/credential-vending-stack";
 import { FrontendConfigStack } from "./frontend/frontend-config-stack";
 
 export class CdkBackendStack extends cdk.Stack {
@@ -26,7 +26,7 @@ export class CdkBackendStack extends cdk.Stack {
 
     const ssmParams = loadSSMParams(this);
 
-    const cognitoStack = new CognitoStack(this, "CognitoStack", {
+    const credentialVendingStack = new CredentialVendingStack(this, "CredentialVendingStack", {
       SSMParams: ssmParams,
       cdkAppName: configParams["CdkAppName"],
     });
@@ -35,10 +35,10 @@ export class CdkBackendStack extends cdk.Stack {
      * CDK Outputs *
      **************************************************************************************************************/
     this.backendStackOutputs.push({ key: "backendRegion", value: this.region });
-    this.backendStackOutputs.push({ key: "identityPoolId", value: cognitoStack.identityPool.ref });
-    this.backendStackOutputs.push({ key: "userPoolId", value: cognitoStack.userPool.userPoolId });
-    this.backendStackOutputs.push({ key: "userPoolWebClientId", value: cognitoStack.userPoolClient.userPoolClientId });
-    this.backendStackOutputs.push({ key: "cognitoDomainURL", value: `https://${cognitoStack.userPoolDomain.domain}.auth.${this.region}.amazoncognito.com` });
+
+    this.backendStackOutputs.push({ key: "credentialVendingApiUrl", value: credentialVendingStack.credentialApiUrl });
+
+    // Connect and service region config
     this.backendStackOutputs.push({ key: "connectInstanceURL", value: ssmParams.connectInstanceURL });
     this.backendStackOutputs.push({ key: "connectInstanceRegion", value: ssmParams.connectInstanceRegion });
     this.backendStackOutputs.push({ key: "transcribeRegion", value: ssmParams.transcribeRegion });
@@ -47,8 +47,8 @@ export class CdkBackendStack extends cdk.Stack {
     this.backendStackOutputs.push({ key: "pollyRegion", value: ssmParams.pollyRegion });
     this.backendStackOutputs.push({ key: "pollyProxyEnabled", value: String(ssmParams.pollyProxyEnabled) });
 
-    new cdk.CfnOutput(this, "userPoolId", {
-      value: cognitoStack.userPool.userPoolId,
+    new cdk.CfnOutput(this, "credentialVendingApiUrl", {
+      value: credentialVendingStack.credentialApiUrl,
     });
   }
 }
