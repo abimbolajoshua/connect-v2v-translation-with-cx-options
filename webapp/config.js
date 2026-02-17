@@ -1,9 +1,9 @@
-export const COGNITO_CONFIG = {
+// Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
+export const CREDENTIAL_CONFIG = {
+  credentialVendingApiUrl: getParamValue(window.WebappConfig.credentialVendingApiUrl),
   region: getParamValue(window.WebappConfig.backendRegion),
-  cognitoDomain: getParamValue(window.WebappConfig.cognitoDomainURL),
-  identityPoolId: getParamValue(window.WebappConfig.identityPoolId),
-  userPoolId: getParamValue(window.WebappConfig.userPoolId),
-  clientId: getParamValue(window.WebappConfig.userPoolWebClientId),
 };
 
 export const CONNECT_CONFIG = {
@@ -18,13 +18,13 @@ export const TRANSCRIBE_CONFIG = {
 export const TRANSLATE_CONFIG = {
   translateRegion: getParamValue(window.WebappConfig.translateRegion),
   translateProxyEnabled: getBoolParamValue(window.WebappConfig.translateProxyEnabled),
-  translateProxyHostname: window.location.hostname, // using Amazon Cloudfront as a proxy
+  translateProxyHostname: window.location.hostname,
 };
 
 export const POLLY_CONFIG = {
   pollyRegion: getParamValue(window.WebappConfig.pollyRegion),
   pollyProxyEnabled: getBoolParamValue(window.WebappConfig.pollyProxyEnabled),
-  pollyProxyHostname: window.location.hostname, // using Amazon Cloudfront as a proxy
+  pollyProxyHostname: window.location.hostname,
 };
 
 function getParamValue(param) {
